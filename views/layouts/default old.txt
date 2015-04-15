@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+<head>
+	<?php echo $this->html->charset();?>
+	<title><?=$title;?> - FavStory </title>
+	<?php echo $this->html->style(array('lithium_s', 'debug', 'favstory')); ?>
+	<?php echo $this->scripts('<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>'); ?>
+	<?php echo $this->html->link('Icon', null, array('type' => 'icon')); ?>
+	
+<link href='http://fonts.googleapis.com/css?family=Kavoon' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
+
+<script type="text/javascript">
+$(function(){
+	var images = ['http://dribbble.s3.amazonaws.com/users/22013/screenshots/323757/attachments/14426/scout_view.png', 'http://www.coolblahblah.com/wp-content/uploads/2013/01/Paris-City-Lights.jpg', 'http://20.rond-point.emdl.fr/rp1-2/files/2013/01/paris_night1.jpg', 'http://us.123rf.com/400wm/400/400/tupungato/tupungato1207/tupungato120700195/14588766-paris-france--vue-sur-la-ville-aerienne-de-la-tour-eiffel.jpg', 'http://imalbum.aufeminin.com/album/D20070802/321001_4TEG2XMGBTHMQUMMTPWAADCGWERURN_photo-010_H073343_L.jpg', 'http://www.konkours.com/w_data/images/30300/30247/30247_128.jpg'];
+
+	var count = 0;
+
+	function swapImage(){
+		$('.topimage').fadeOut('slow', function(){
+			if(count < 0) {
+				count = images.length -1;
+			}
+			var current = Math.floor(count % images.length);
+			$(this).attr('src', images[current]);
+			$(this).fadeIn();
+		});
+	}
+	
+	function preload(arrayOfImages) {
+		$(arrayOfImages).each(function(){
+			$('<img/>')[0].src = this;
+		});
+	}
+	preload(images);
+	
+	$(window).scroll(function(e){
+		var el = $('#productMenuSmall');		
+		if ($(this).scrollTop() > 300){
+			el.slideDown();
+		}
+		else{
+			el.stop().slideUp();
+		}
+		
+		if ($(this).scrollTop() > 770){
+			$('#moveIcon').css({'position': 'fixed', 'top': '50px'});
+		}
+		else{
+			$('#moveIcon').css({'position': 'absolute', 'top': 'auto'});
+		}
+	});
+
+	$('.moveLeft').click(function(e){
+			count--;
+			swapImage();
+	});
+	
+	$('.moveRight').click(function(e){
+			count++;
+			swapImage();
+	});
+
+});
+</script>
+
+</head>
+<body>
+	<header>
+		<div id="header">
+			<?=$this->html->link(' ', 'Pages::home', array('id' => 'logo'))?>
+			<div id="headerMenu">
+				<ul>					
+					<li><?=$this->html->link($t('Histoires'), array('controller' => 'posts', 'action' => 'index')); ?></li>
+					<li><?=$this->html->link($t('Mes favs'), array('controller' => 'favoris', 'action' => 'index'), array('id' => 'menuFavoris')); ?></li>
+					<li id="scan"><?=$this->html->link($t(' '), array('controller' => 'scan', 'action' => 'index')); ?></li>
+					<li><?=$this->html->link($t('Fav Club'), array('controller' => 'messages', 'action' => 'index')); ?></li>
+					<li><?=$this->html->link($t('Mon compte'), array('controller' => 'users', 'action' => 'profile')); ?></li>
+				</ul>
+			</div>
+			<div id="login">
+				<?=$this->html->link($t('Connexion'), array('controller' => 'Sessions', 'action' => 'add', 'args' => serialize($this->_request->params)), array('id'=>'btnInscription'))?><?=$this->html->link($t('Inscription'), array('controller' => 'Users', 'action' => 'add', 'args' => serialize($this->_request->params)), array('id'=>'btnConnexion'))?>
+				<?=$this->html->link($t('Espace créateurs &raquo;'), array('controller' => 'posts', 'action' => 'seller'), array('class'=>'backoffice', 'escape' => false)); ?>
+			</div>
+		</div>
+	</header>
+	<?php /*
+	<div id="container">
+		<div id="header">
+			<!-- BEGIN locales -->
+			<?php
+			use lithium\core\Environment;
+			use lithium\g11n\Message;
+			use lithium\g11n\Catalog;
+			extract(Message::aliases());
+			?>
+			<div id="navigation">
+				<div id="left">
+				<?=$this->html->link('FavStory', 'Pages::home', array('id' => 'logo'))?>
+				
+				<ul id="locales">
+					<?php foreach (Environment::get('locales') as $locale => $name): ?>
+						<li><?=$this->html->link($name, compact('locale') + $this->_request->params); ?></li>
+					<?php endforeach; ?>
+					<!--
+					<li><?=$this->html->link('Démo traduction', 'pages/globalization')?></li>
+					-->
+					
+					<!--<li>Current : <b><?=Environment::get('locale')?></b></li>-->
+				</ul>
+				</div>
+				
+				<div id="center" style="width:800px">
+					<ul>
+						<li><?=$this->html->link($t('Histoires'), array('controller' => 'posts', 'action' => 'index')); ?></li>
+						<li><?=$this->html->link($t('Favoris'), array('controller' => 'favoris', 'action' => 'index'), array('id' => 'menuFavoris')); ?></li>
+						<li id="scan"><?=$this->html->link($t('Scanner un objet'), array('controller' => 'scan', 'action' => 'index')); ?></li>
+						<li><?=$this->html->link($t('Club'), array('controller' => 'messages', 'action' => 'index')); ?></li>
+						<li><?=$this->html->link($t('Mon compte'), array('controller' => 'users', 'action' => 'profile')); ?></li>
+						<li><?=$this->html->link($t('Espace Créateurs'), array('controller' => 'posts', 'action' => 'seller')); ?></li>
+						<li><?=$this->html->link($t('Backend Admin'), array('controller' => 'posts', 'action' => 'seller', 'args' => 'admin')); ?></li>
+					</ul>
+				</div>
+				
+				<div id="right">
+					<?php
+					use lithium\security\Auth;
+					if($me = Auth::check('default')) {
+						echo 'Bonjour '. $me['firstname'] .' '. $me['lastname'] .'';
+						echo ' - ';
+						echo $this->html->link('Se déconnecter', array('controller' => 'Sessions', 'action' => 'delete'));
+					}
+					else {
+					?>
+					<?=$this->html->link($t('Connexion'), array('controller' => 'Sessions', 'action' => 'add', 'args' => serialize($this->_request->params)))?>	
+					 - 
+					<?=$this->html->link($t('Inscription'), array('controller' => 'Users', 'action' => 'add', 'args' => serialize($this->_request->params)))?>
+					<?php } ?>
+				</div>
+			</div>
+			<?php
+			if(Environment::get('locale') == 'en') {
+				$isocode = 'en';
+				$datas = array(
+					'Liste des produits' => 'List of products',
+					'Ajouter un produit' => 'Add an item',
+					'Mon panier' => 'My cart',
+					'Identifiant' => 'Email adress',
+					'Mot de passe' => 'Password',
+					'Connexion' => 'Sign in',
+					'S\'inscrire' => 'Register',
+					'aucun article dans mon panier' => 'No product in my cart',
+					'article dans mon panier' => '1 product',
+					'{:count} articles dans mon panier' => '{:count} products',
+					'Voir mon panier' => 'View cart',
+					'Frais de livraison' => 'Shipping',
+					'Commander' => 'Check out',
+					'Inscrivez-vous' => 'Register',
+					'Email' => 'E-mail',
+					'Mot de passe' => 'Password',
+					'Prénom' => 'First name',
+					'Nom' => 'Last name',
+					'M\'inscrire' => 'Register',
+					'J\'accepte les conditions générales d\'utilisation' => 'I agree with the Terms of Service and the Privacy Policy.',
+				);
+			}
+
+			if(Environment::get('locale') == 'de') {
+				$isocode = 'de';
+				$datas = array(
+					'Liste des produits' => 'Liste der Produkte',
+					'Ajouter un produit' => 'Ein Produkt hinzufügen',
+					'Mon panier' => 'Mein Warenkorb',
+					'Identifiant' => 'E-Mail Adresse',
+					'Mot de passe' => 'Passwort',
+					'Connexion' => 'Anmelden',
+					'S\'inscrire' => 'Registrieren',
+					'aucun article dans mon panier' => 'Kein Produkt im Warenkorb',
+					'article dans mon panier' => '1 Produkt',
+					'{:count} articles dans mon panier' => '{:count} Produkte',
+					'Voir mon panier' => 'Warenkorb',
+					'Frais de livraison' => 'Versandkosten',
+					'Commander' => 'Kasse',
+				);
+			}
+
+			if(isset($datas)) {
+				Catalog::write('runtime', 'message', $isocode, $datas);
+			}
+			?>
+			<!-- END locales -->
+			<!--
+				<ul id="menu">
+					<li><?=$this->html->link($t('Liste des produits'), array('controller' => 'posts', 'action' => 'index')); ?></li>
+					<li><?=$this->html->link($t('Ajouter un produit'), array('controller' => 'posts', 'action' => 'add')); ?></li>
+					<li><?=$this->html->link($t('Mon panier'), array('controller' => 'checkout', 'action' => 'index')); ?></li>
+				</ul>
+			-->
+
+		</div>
+		*/ ?>
+		
+		<div id="content"><?php echo $this->content(); ?></div>
+		
+        <footer style="background:#fff;padding:25px 100px 40px;color:#777;border-top:1px solid #cecdcb;margin:0;margin-top:25px;font-family:'Roboto Condensed', sans-serif;">
+			<div class="left">&copy; FavStory 2013, Tous droits résérvés</div>
+		</footer>
+	</div>
+</body>
+</html>
